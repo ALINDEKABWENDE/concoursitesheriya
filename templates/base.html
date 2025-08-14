@@ -1,0 +1,277 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Juriplatform | Portail juridique RDC</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- Favicon & SEO -->
+  <link rel="icon" href="{% static 'img/favicon.ico' %}">
+  <meta name="description" content="Plateforme juridique intelligente pour citoyens, juristes et institutions de la RDC.">
+
+  <!-- UI — Ultra style -->
+  <style>
+    body {
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #a6e5edff, #5022daff);
+    background-attachment: fixed;
+    color: #333;
+    padding-top: 4.5rem;
+  }
+
+  /* Effet Glassmorphism générique */
+  .glass {
+    background: rgba(239, 16, 16, 0.97);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Navbar */
+  nav.navbar {
+    background: rgba(33, 37, 41, 0.4) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+    nav.navbar .nav-link:hover {
+  color: #ffc107 !important;                      /* survol jaune/doré */
+}
+nav.navbar .navbar-brand,
+nav.navbar .nav-link {
+  color: #d8ecfaff !important;                     /* texte clair */
+}
+
+  /* Footer */
+  footer {
+  background: rgba(162, 212, 248, 0.46);       /* Fond très translucide */
+  backdrop-filter: blur(12px);                 /* Flou derrière */
+  -webkit-backdrop-filter: blur(12px);         /* Support Safari */
+  border-top: 1px solid rgba(255, 255, 255, 0.3); /* Bordure douce */
+  border-radius: 15px 15px 0 0;                /* Coins arrondis en haut */
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);  /* Légère ombre portée */
+  color: #eee;                                 /* Texte clair */
+  padding-top: 3rem !important;                /* Garde tes paddings */
+  padding-bottom: 2rem !important;
+  margin-top: 3rem !important;
+}
+
+
+  /* Contenu principal */
+  main.container {
+    padding: 20px;
+  }
+
+  main.container  {
+    padding: 20px;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+  }
+  </style>
+</head>
+<body>
+
+<!-- Scroll-to-top -->
+<button class="scroll-top" id="scrollTopBtn" aria-label="Retour en haut">
+  <i class="bi bi-arrow-up"></i>
+</button>
+
+<!-- Toast messages -->
+<div class="toast-container">
+  {% if messages %}
+    {% for message in messages %}
+      <div class="toast show text-bg-{{ message.tags|default:'dark' }} border-0 mb-2 shadow">
+        <div class="toast-body">{{ message }}</div>
+      </div>
+    {% endfor %}
+  {% endif %}
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'cabinet:accueil' %}">
+     <img src="{% static 'img/logo.png' %}" alt="Logo Sheriya" class="me-2" style="height: 64px; width: auto;"> <span>Sheriya</span>
+      <span class="badge badge-role ms-1">RDC</span>
+    </a>
+
+    <div class="d-flex d-lg-none gap-2">
+      {% if user.is_authenticated %}
+        <a href="{% url 'accounts:logout' %}" class="btn btn-sm btn-ghost"><i class="bi bi-box-arrow-right"></i></a>
+      {% else %}
+        <button class="btn btn-sm btn-ghost" data-bs-toggle="modal" data-bs-target="#accountModal"><i class="bi bi-person-plus"></i></button>
+      {% endif %}
+      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
+
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto align-items-center gap-1">
+        {% if user.is_authenticated and user.juriste_profile %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'accounts:juriste_dashboard' %}"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'dossiers:liste_dossiers' %}"><i class="bi bi-folder2-open"></i> Dossiers</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'accounts:voir_profil' %}"><i class="bi bi-person-badge"></i> Profil</a></li>
+          <li class="nav-item ms-2"><a class="btn btn-sm btn-ghost" href="{% url 'accounts:logout' %}"><i class="bi bi-box-arrow-right"></i> Déconnexion</a></li>
+        {% elif user.is_authenticated %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'citoyen:dashboard' %}"><i class="bi bi-house-door"></i> Accueil</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'citoyen:mes_demandes' %}"><i class="bi bi-envelope-open"></i> Mes demandes</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'accounts:voir_profil_citoyen' %}"><i class="bi bi-person-circle"></i> Profil</a></li>
+          <li class="nav-item ms-2"><a class="btn btn-sm btn-ghost" href="{% url 'accounts:logout' %}"><i class="bi bi-box-arrow-right"></i> Déconnexion</a></li>
+        {% else %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
+              <i class="bi bi-box-arrow-in-right"></i> Connexion
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark shadow">
+              <li><a class="dropdown-item" href="{% url 'accounts:login' %}"> Institutionnel</a></li>
+              <li><a class="dropdown-item" href="{% url 'accounts:login_citoyen_view' %}"> Citoyen</a></li>
+            </ul>
+          </li>
+          <li class="nav-item ms-1">
+            <button class="btn btn-sm btn-cta" data-bs-toggle="modal" data-bs-target="#accountModal">
+              <i class="bi bi-person-plus"></i> Créer un compte
+            </button>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- OFFCANVAS MOBILE -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel">
+  <div class="offcanvas-header">
+    <h5 id="mobileMenuLabel" class="mb-0">Menu</h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div class="list-group list-menu">
+      {% if user.is_authenticated and user.juriste_profile %}
+        <a href="{% url 'accounts:juriste_dashboard' %}" class="list-group-item list-group-item-action bg-transparent text-light border-0"><i class="bi bi-speedometer2"></i> Dashboard juriste</a>
+        <a href="{% url 'dossiers:liste_dossiers' %}" class="list-group-item list-group-item-action bg-transparent text-light border-0"><i class="bi bi-folder2-open"></i> Mes dossiers</a>
+        <a href="{% url 'accounts:voir_profil' %}" class="list-group-item list-group-item-action bg-transparent text-light border-0"><i class="bi bi-person-badge"></i> Mon profil</a>
+        <hr class="border-secondary">
+        <a href="{% url 'accounts:logout' %}" class="list-group-item list-group-item-action bg-transparent text-danger border-0"><i class="bi bi-box-arrow-right"></i> Déconnexion</a>
+      {% elif user.is_authenticated %}
+        <a href="{% url 'citoyen:dashboard' %}" class="list-group-item list-group-item-action bg-transparent text-light border-0"><i class="bi bi-house-door"></i> Accueil citoyen</a>
+        <a href="{% url 'citoyen:mes_demandes' %}" class="list-group-item list-group-item-action bg-transparent text-light border-0"><i class="bi bi-envelope-open"></i> Mes demandes</a>
+        <a href="{% url 'accounts:modifier_profil_citoyen' %}" class="list-group-item list-group-item-action bg-transparent text-light border-0"><i class="bi bi-person-circle"></i> Mon profil</a>
+        <hr class="border-secondary">
+        <a href="{% url 'accounts:logout' %}" class="list-group-item list-group-item-action bg-transparent text-danger border-0"><i class="bi bi-box-arrow-right"></i> Déconnexion</a>
+      {% else %}
+        <a href="{% url 'accounts:login' %}" class="list-group-item list-group-item-action bg-transparent text-light border-0"><i class="bi bi-building-lock"></i> Connexion Institution</a>
+        <a href="{% url 'accounts:login_citoyen_view' %}" class="list-group-item list-group-item-action bg-transparent text-light border-0"><i class="bi bi-person"></i> Connexion Citoyen</a>
+        <hr class="border-secondary">
+        <button class="btn btn-cta w-100" data-bs-toggle="modal" data-bs-target="#accountModal"><i class="bi bi-person-plus"></i> Créer un compte</button>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- CONTENU -->
+<main class="container my-4">
+  {% block content %}{% endblock %}
+</main>
+
+<!-- FOOTER -->
+<footer class="mt-auto">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-5">
+        <h5 class="fw-bold mb-2"> Juriplatform</h5>
+        <p class="small text-secondary">Portail juridique intelligent pour la RDC — structuration, accès et innovation au service des citoyens et des institutions.</p>
+        <span class="badge badge-role">Version stable</span>
+      </div>
+      <div class="col-md-4">
+        <h6 class="text-uppercase fw-bold mb-3">Navigation</h6>
+        <ul class="list-unstyled">
+          {% if user.is_authenticated and user.juriste_profile %}
+            <li class="mb-2"><a href="{% url 'accounts:juriste_dashboard' %}"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+            <li class="mb-2"><a href="{% url 'dossiers:liste_dossiers' %}"><i class="bi bi-folder2-open"></i> Mes dossiers</a></li>
+            <li class="mb-2"><a href="{% url 'accounts:voir_profil' %}"><i class="bi bi-person-badge"></i> Profil</a></li>
+          {% elif user.is_authenticated %}
+            <li class="mb-2"><a href="{% url 'citoyen:dashboard' %}"><i class="bi bi-house-door"></i> Accueil</a></li>
+            <li class="mb-2"><a href="{% url 'citoyen:mes_demandes' %}"><i class="bi bi-envelope-open"></i> Mes demandes</a></li>
+            <li class="mb-2"><a href="{% url 'accounts:modifier_profil_citoyen' %}"><i class="bi bi-person-circle"></i> Profil</a></li>
+          {% else %}
+            <li class="mb-2"><a href="{% url 'accounts:login' %}"><i class="bi bi-box-arrow-in-right"></i> Connexion</a></li>
+            <li class="mb-2"><a href="#" data-bs-toggle="modal" data-bs-target="#accountModal"><i class="bi bi-person-plus"></i> Créer un compte</a></li>
+          {% endif %}
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h6 class="text-uppercase fw-bold mb-3">Contact</h6>
+        <p class="small"><i class="bi bi-envelope"></i> contact@juriplatform.cd</p>
+        <p class="small"><i class="bi bi-github"></i> Juriplatform-RDC</p>
+      </div>
+    </div>
+    <hr class="border-secondary mt-4">
+    <div class="text-center small text-secondary">
+      &copy; {% now "Y" %} Juriplatform • Tous droits réservés.
+    </div>
+  </div>
+</footer>
+
+<!-- MODAL — Choix de compte -->
+<div class="modal fade" id="accountModal" tabindex="-1" aria-labelledby="accountModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold" id="accountModalLabel">Créer un compte</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="vstack gap-3">
+          <a class="account-tile text-decoration-none text-light" href="{% url 'accounts:register_juriste' %}">
+            <i class="bi bi-bank2 fs-4 text-info"></i>
+            <div>
+              <div class="fw-bold">Compte Institutionnel (Juriste)</div>
+              <small class="text-secondary">Profil vérifié, vitrine professionnelle, accès dossiers.</small>
+            </div>
+          </a>
+          <a class="account-tile text-decoration-none text-light" href="{% url  'accounts:signup_citoyen' %}">
+            <i class="bi bi-person fs-4 text-warning"></i>
+            <div>
+              <div class="fw-bold">Compte Citoyen</div>
+              <small class="text-secondary">Suivi de demandes, accès documents et services.</small>
+            </div>
+          </a>
+          <div class="text-center mt-2">
+            <small class="text-secondary">Vous avez déjà un compte ?</small><br>
+            <div class="btn-group mt-2">
+              <a href="{% url 'accounts:login' %}" class="btn btn-sm btn-ghost">Se connecter (Institution)</a>
+              <a href="{% url 'accounts:login_citoyen_view' %}" class="btn btn-sm btn-ghost">Se connecter (Citoyen)</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer border-0">
+        <button class="btn btn-ghost" data-bs-dismiss="modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JS Bootstrap + UX -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const st = document.getElementById('scrollTopBtn');
+  window.addEventListener('scroll', () => {
+    st.style.display = (window.scrollY > 220) ? 'inline-flex' : 'none';
+  });
+</script>
+</body>
+</html>
