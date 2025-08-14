@@ -4,10 +4,15 @@ from django.contrib.auth.views import LogoutView
 from django.conf import settings
 from django.conf.urls.static import static
 from accounts.views import login_view  # ✅ Import direct pour /login
+from django.http import JsonResponse
+
+def health_check(request):
+    return JsonResponse({'status': 'ok'})
 
 urlpatterns = [
     # 🛠️ Interface d’administration
     path('admin/', admin.site.urls),
+    path("healthz", health_check),
 
     # 🧩 Inclusions des apps avec namespace
     path('dossiers/', include('dossiers.urls', namespace='dossiers')),

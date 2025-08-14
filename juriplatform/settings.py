@@ -5,9 +5,9 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # 🔐 Sécurité
-SECRET_KEY = 'django-insecure-7*8@q)7fp_+!ia$w@4z9sl%b@l*5^su8l2k=lgp3@182)e6o3k'
-DEBUG = True
-ALLOWED_HOSTS = ['*']
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-7*8@q)7fp_+!ia$w@4z9sl%b@l*5^su8l2k=lgp3@182)e6o3k')
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 
 LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "/dashboard/"
@@ -20,7 +20,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
     'actualites.apps.ActualitesConfig',
     'documents.apps.DocumentsConfig',
     'legislation.apps.LegislationConfig',
@@ -29,8 +29,8 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'channels',
     'consultation.apps.ConsultationConfig',
-     'widget_tweaks',
-    'chat',  
+    'widget_tweaks',
+    'chat',
 ]
 
 # 🧱 Middleware
@@ -44,18 +44,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ASGI_APPLICATION = "juriplatform.asgi.application"
-
-# Redis pour gérer les connexions WebSocket
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
-            
-        },
-    },
-}
+# 🔐 Sécurité HTTPS (Render gère SSL)
+SECURE_SSL_REDIRECT = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
 
 # 🌐 Configuration des URLs
 ROOT_URLCONF = 'juriplatform.urls'
@@ -76,10 +68,11 @@ TEMPLATES = [
     },
 ]
 
-# 🔧 Application WSGI
+# 🔧 Application WSGI/ASGI
 WSGI_APPLICATION = 'juriplatform.wsgi.application'
+ASGI_APPLICATION = "juriplatform.asgi.application"
 
-# 🗄️ Base de données
+# 🗄️ Base de données (SQLite par défaut, PostgreSQL possible via DATABASE_URL)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -104,11 +97,21 @@ USE_TZ = True
 # 📦 Fichiers statiques
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # ✅ nécessaire pour collectstatic
 
-# 🆔 Clé primaire automatique
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# —————————————————————
 # 🖼️ Fichiers médias (uploads)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# 🔌 Redis pour WebSocket (à adapter en prod)
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
+
+# 🆔 Clé primaire automatique
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
