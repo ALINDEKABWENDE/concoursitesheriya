@@ -15,62 +15,105 @@
   <meta name="description" content="Plateforme juridique intelligente pour citoyens, juristes et institutions de la RDC.">
 
   <!-- UI — Ultra style -->
-  <style>
-    body {
+<style>
+body {
     font-family: 'Segoe UI', Roboto, sans-serif;
     background: linear-gradient(135deg, #a6e5edff, #5022daff);
     background-attachment: fixed;
     color: #333;
     padding-top: 4.5rem;
-  }
+}
+/* Fond sombre pour l'offcanvas */
+.offcanvas.offcanvas-end {
+    background-color: #212529; /* fond sombre */
+    color: #fff;
+}
 
-  /* Effet Glassmorphism générique */
-  .glass {
+/* Liens offcanvas */
+.offcanvas.offcanvas-end .list-group-item {
+    color: #fff !important;
+    background: transparent;
+    border: none;
+}
+
+.offcanvas.offcanvas-end .list-group-item:hover {
+    color: #ffc107 !important; /* jaune au survol */
+}
+
+/* Lien de déconnexion en rouge */
+.offcanvas.offcanvas-end .list-group-item.text-danger {
+    color: #ff4d4d !important;
+}
+
+.offcanvas.offcanvas-end .list-group-item.text-danger:hover {
+    color: #ff7777 !important;
+}
+
+
+/* Effet Glassmorphism générique */
+.glass {
     background: rgba(239, 16, 16, 0.97);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  }
+}
 
-  /* Navbar */
-  nav.navbar {
+/* Navbar */
+nav.navbar {
     background: rgba(33, 37, 41, 0.4) !important;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  
-    nav.navbar .nav-link:hover {
-  color: #ffc107 !important;                      /* survol jaune/doré */
+}
+
+/* Liens de navbar */
+nav.navbar .nav-link:hover {
+    color: #ffc107 !important; /* survol jaune/doré */
 }
 nav.navbar .navbar-brand,
 nav.navbar .nav-link {
-  color: #d8ecfaff !important;                     /* texte clair */
+    color: #0c0f11ff !important; /* texte clair */
 }
 
-  /* Footer */
-  footer {
-  background: rgba(162, 212, 248, 0.46);       /* Fond très translucide */
-  backdrop-filter: blur(12px);                 /* Flou derrière */
-  -webkit-backdrop-filter: blur(12px);         /* Support Safari */
-  border-top: 1px solid rgba(255, 255, 255, 0.3); /* Bordure douce */
-  border-radius: 15px 15px 0 0;                /* Coins arrondis en haut */
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);  /* Légère ombre portée */
-  color: #eee;                                 /* Texte clair */
-  padding-top: 3rem !important;                /* Garde tes paddings */
-  padding-bottom: 2rem !important;
-  margin-top: 3rem !important;
+/* Menu hamburger (overlay) */
+.menu-hamburger {
+    background: rgba(239, 16, 16, 0.97); /* couleur du menu */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 12px;
+    padding: 1rem;
 }
 
+/* Liens à l'intérieur du menu hamburger */
+.menu-hamburger a {
+    color: #ffffff;           /* couleur blanche pour contraste */
+    text-decoration: none;
+    display: block;
+    margin: 0.5rem 0;
+}
 
-  /* Contenu principal */
-  main.container {
-    padding: 20px;
-  }
+.menu-hamburger a:hover {
+    color: #ffc107;           /* survol jaune/doré */
+}
 
-  main.container  {
+/* Footer */
+footer {
+    background: rgba(162, 212, 248, 0.46);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 15px 15px 0 0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    color: #eee;
+    padding-top: 3rem !important;
+    padding-bottom: 2rem !important;
+    margin-top: 3rem !important;
+}
+
+/* Contenu principal */
+main.container {
     padding: 20px;
     border-radius: 15px;
     background: rgba(255, 255, 255, 0.15);
@@ -78,8 +121,9 @@ nav.navbar .nav-link {
     -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: #fff;
-  }
-  </style>
+}
+</style>
+
 </head>
 <body>
 
