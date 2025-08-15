@@ -51,6 +51,15 @@ SESSION_COOKIE_SECURE = not DEBUG
 
 # 🌐 Configuration des URLs
 ROOT_URLCONF = 'juriplatform.urls'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # 🎨 Templates
 TEMPLATES = [
